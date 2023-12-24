@@ -12,6 +12,22 @@ class TimeExtractor:
         self.time_pattern = DATETIME_PATTERN
 
     def extractor(self, element: HtmlElement, publish_time_xpath: str = '') -> dict:
+        '''
+        时间解析器
+        :param element:网页对象
+        :param publish_time_xpath:发布时间xpath
+        :return:
+        /*
+        发布时间会整理以下四种格式以字典的形式返回
+        {
+            'publish_time_src': '2012-12-10T09:24:01+00:00', # 发布时间原始数据
+            'publish_time_ts': 1355131441, # 发布时间时间戳格式
+            'publish_time_zone': UTC, # 发布时间的时区
+            'publish_time_format': '2012-12-10 09:24:01' # 发布时间格式化后的数据
+        }
+        */
+
+        '''
         publish_time_xpath = publish_time_xpath or config.get('publish_time', {}).get('xpath')
         publish_time = (self.extract_from_user_xpath(publish_time_xpath, element)  # 用户指定的 Xpath 是第一优先级
                         or self.extract_from_meta(element)  # 第二优先级从 Meta 中提取
@@ -77,12 +93,12 @@ class TimeExtractor:
         设置默认的发布时间
         :return:
         '''
-        cts = int(time.time())
-        ctime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(cts))
-        publish_time = parse(ctime)
+        # cts = int(time.time())
+        # ctime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(cts))
+        # publish_time = parse(ctime)
         return {
-            'publish_time_src': ctime,
-            'publish_time_ts': cts,
-            'publish_time_zone': publish_time.strftime('%Z'),
-            'publish_time_format': ctime
+            'publish_time_src': '',
+            'publish_time_ts': '',
+            'publish_time_zone': '',
+            'publish_time_format': ''
         }
