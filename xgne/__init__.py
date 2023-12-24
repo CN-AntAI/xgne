@@ -1,5 +1,6 @@
 from .utils import pre_parse, remove_noise_node, config, html2element, normalize_text
-from .extractor import ContentExtractor, TitleExtractor, TimeExtractor, AuthorExtractor, ListExtractor, LangExtractor
+from .extractor import ContentExtractor, TitleExtractor, TimeExtractor, AuthorExtractor, ListExtractor, LangExtractor, \
+    HeadMetaExtractor
 
 
 class GeneralNewsExtractor:
@@ -19,6 +20,7 @@ class GeneralNewsExtractor:
         normal_html = normalize_text(html)
         element = html2element(normal_html)
         lang = LangExtractor().language(html)
+        headmeta = HeadMetaExtractor().extractor(element)
         title = TitleExtractor().extract(element, title_xpath=title_xpath)
         publish_time = TimeExtractor().extractor(element, publish_time_xpath=publish_time_xpath)
         author = AuthorExtractor().extractor(element, author_xpath=author_xpath)
@@ -34,7 +36,8 @@ class GeneralNewsExtractor:
                   'publish_time': publish_time,
                   'lang': lang,
                   'content': content[0][1]['text'],
-                  'images': content[0][1]['images']
+                  'images': content[0][1]['images'],
+                  'headmeta': headmeta
                   }
         if with_body_html or config.get('with_body_html', False):
             result['body_html'] = content[0][1]['body_html']
