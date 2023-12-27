@@ -26,6 +26,8 @@ class GeneralNewsExtractor:
         author = AuthorExtractor().extractor(element, author_xpath=author_xpath)
         element = pre_parse(element)
         remove_noise_node(element, noise_node_list)
+        if not host:
+            host = headmeta.get('host')
         content = ContentExtractor().extract(element,
                                              host=host,
                                              with_body_html=with_body_html,
@@ -37,7 +39,8 @@ class GeneralNewsExtractor:
                   'lang': lang,
                   'content': content[0][1]['text'],
                   'images': content[0][1]['images'],
-                  'headmeta': headmeta
+                  'headmeta': headmeta,
+                  'web_site': headmeta.pop('host')
                   }
         if with_body_html or config.get('with_body_html', False):
             result['body_html'] = content[0][1]['body_html']
