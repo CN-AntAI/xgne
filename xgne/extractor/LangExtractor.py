@@ -1,80 +1,59 @@
-import locale
 import re
-
-from langdetect import detect
-from langdetect.lang_detect_exception import LangDetectException
+import locale
+import langid
 from lxml import html
 
 
-class LangExtractor():
-    """This class implements LangDetect as an article extractor but it can only
-    detect the extracted language (en, de, ...).
-
-    """
-
+class LangExtractor:
     def __init__(self):
-        self.name = "langdetect"
+        self.name = "langid"
+        # 用于提取语言代码的正则表达式模式
         self.langcode_pattern = re.compile(r'\b[a-zA-Z]{2}(?=([-_]|\b))')
 
     def language(self, response):
-        """Returns the language of the extracted article by analyzing metatags and inspecting the visible text
-        with langdetect"""
-
         try:
             root = html.fromstring(response)
         except ValueError:
             root = html.fromstring(response.encode("utf-8"))
 
-        # Check for lang-attributes
-        lang = root.get('lang')
+        # 从不同的源提取语言
+        lang = self.extract_from_attributes(root) or \
+               self.extract_from_meta_tags(root) or \
+               self.extract_from_articles(root) or \
+               self.extract_from_body(root)
 
-        if lang is None:
-            lang = root.get('xml:lang')
-
-        # Check for general meta tags
-        if lang is None:
-            meta = root.cssselect('meta[name="language"]')
-            if len(meta) > 0:
-                lang = meta[0].get('content')
-
-        # Check for open graph tags
-        if lang is None:
-            meta = root.cssselect('meta[property="og:locale"]')
-            if len(meta) > 0:
-                lang = meta[0].get('content')
-
-        # Look for <article> elements and inspect the one with the largest payload with langdetect
-        if lang is None:
-            article_list = []
-            for article in root.xpath('//article'):
-                article_list.append(re.sub(r'\s+', ' ', article.text_content().strip()))
-                longest_articles = sorted(article_list, key=lambda article: len(article), reverse=True)
-                for article in longest_articles:
-                    try:
-                        lang = detect(article)
-                    except LangDetectException:
-                        continue
-                    else:
-                        break
-
-        # Analyze the whole body with langdetect
-        if lang is None:
-            try:
-                lang = detect(root.text_content().strip())
-            except LangDetectException:
-                pass
-
-        # Try to normalize output
-        if lang is not None:
-            # First search for suitable locale in the original output
-            matches = self.langcode_pattern.search(lang)
-            if matches is not None:
-                lang = matches.group(0)
-            else:
-                # If no match was found, normalize the original output and search again
-                normalized = locale.normalize(re.split(r'\s|;|,', lang.strip())[0])
-                matches = self.langcode_pattern.search(normalized)
-                if matches is not None:
-                    lang = matches.group(0)
+        if lang:
+            lang = self.normalize_language(lang)
 
         return lang
+
+    def extract_from_attributes(self, root):
+        # 从 HTML 属性中提取语言代码
+        lang = root.get('lang') or root.get('xml:lang')
+        return lang
+
+    def extract_from_meta_tags(self, root):
+        # 从 meta 标签中提取语言代码
+        lang = root.xpath('string(//meta[@name="language"]/@content)') or \
+               root.xpath('string(//meta[@property="og:locale"]/@content)')
+        return lang.strip() if lang else None
+
+    def extract_from_articles(self, root):
+        # 从文章中提取语言代码，选择最长的文章
+        article_texts = [re.sub(r'\s+', ' ', article.text_content().strip()) for article in root.xpath('//article')]
+        longest_article = max(article_texts, key=len, default='')
+        return langid.classify(longest_article)[0] if longest_article else None
+
+    def extract_from_body(self, root):
+        # 从整个 HTML 主体中提取语言代码
+        return langid.classify(root.text_content().strip())[0]
+
+    def normalize_language(self, lang):
+        # 规范化语言代码的输出
+        matches = self.langcode_pattern.search(lang)
+        if matches:
+            return matches.group(0)
+        else:
+            normalized = locale.normalize(re.split(r'\s|;|,', lang.strip())[0])
+            matches = self.langcode_pattern.search(normalized)
+            return matches.group(0) if matches else None
