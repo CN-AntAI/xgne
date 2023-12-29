@@ -26,8 +26,7 @@ class AuthorExtractor:
         for pattern in self.author_pattern:
             author_obj = re.search(pattern, text)
             if author_obj:
-                self.authors = author_obj.group
-                break
+                self.authors = self.authors + [author_obj.group(0)]
         self.authors = [i.strip() for i in self.authors if i.strip()]
         # 如果未成功提取作者信息，则尝试从 JSON-LD 数据和其他元素中提取
         if not self.authors:
