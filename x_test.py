@@ -11,16 +11,22 @@ from pprint import pprint
 from xgne import GeneralNewsExtractor
 
 # html = '''经过渲染的网页 HTML 代码'''
-# url = 'https://nationalinterest.org/blog/buzz/china-offered-taiwanese-pilot-15-million-steal-us-made-ch-47-helicopter-207917'
 import requests
 
+# url = 'https://washingtonindependent.com/how-to-apply-for-reseller-permit-in-washington-state/'
+# url = 'https://nationalinterest.org/blog/buzz/china-offered-taiwanese-pilot-15-million-steal-us-made-ch-47-helicopter-207917'
 # url = 'https://tulapressa.ru/2023/12/jetour-x70-plus-eshhe-bolshe-vozmozhnostej-dlya-semejnyx-puteshestvij/'
 # url = 'https://www.thepaper.cn/newsDetail_forward_25397910'
+url = 'https://www.autodeal.com.ph/articles/car-news-philippines/jetour-auto-alabang-launches-new-premium-dealership'
 
 # url = 'https://abreview.ru/ab/news/hongqi_uvelichil_set_do_15_dilerov/'
 # url = 'http://www.bbc.co.uk/zhongwen/simp/chinese_news/2012/12/121210_hongkong_politics.shtml'
-url = 'https://tulapressa.ru/2023/12/jetour-x70-plus-eshhe-bolshe-vozmozhnostej-dlya-semejnyx-puteshestvij/'
+# url = 'https://tulapressa.ru/2023/12/jetour-x70-plus-eshhe-bolshe-vozmozhnostej-dlya-semejnyx-puteshestvij/'
+# url = 'https://vk.com/jetour_keyauto_krasnodar?from=quick_search'
+# url = 'https://m.vk.com/wall-220824670_826'
+# url = 'https://m.vk.com/wall-220824670_803'
 # url = 'https://club.autohome.com.cn/bbs/thread/51d14cddbcd9673f/107158122-1.html'
+# url = 'https://www.ruiwen.com/xindetihui/6404315.html'
 
 proxies = {
     'http': 'http://192.168.1.112:1205',
@@ -32,8 +38,8 @@ headers = {
 
 
 if __name__ == '__main__':
-    response = requests.get(url=url, proxies=proxies, headers=headers)
-    # response = requests.get(url=url, headers=headers)
+    # response = requests.get(url=url, proxies=proxies, headers=headers)
+    response = requests.get(url=url)
     if response.status_code in [200, 302]:
         html = response.text
         extractor = GeneralNewsExtractor()
