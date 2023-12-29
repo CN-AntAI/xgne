@@ -15,6 +15,32 @@ AUTHOR_PATTERN = [
             # '(文/图[：|:| |丨|/]?\s*[\u4E00-\u9FA5a-zA-Z、 ]{2,20})[）】)]]?[^\u4E00-\u9FA5|:|：]',
 ]
 
+AUTHOR_ATTRS = ["name", "rel", "itemprop", "class", "id", "property"]
+AUTHOR_VALS = [
+    "author",
+    "byline",
+    "dc.creator",
+    "byl",
+    "article:author",
+    "story-byline",
+    "article-author",
+]
+AUTHOR_STOP_WORDS = [
+    "By",
+    "Reuters",
+    "IANS",
+    "AP",
+    "AFP",
+    "PTI",
+    "IANS",
+    "ANI",
+    "DPA",
+    "Senior Reporter",
+    "Reporter",
+    "Writer",
+    "Opinion Writer",
+]
+
 DATETIME_PATTERN = [
     "(\d{4}[-|/|.]\d{1,2}[-|/|.]\d{1,2}\s*?[0-1]?[0-9]:[0-5]?[0-9]:[0-5]?[0-9])",
     "(\d{4}[-|/|.]\d{1,2}[-|/|.]\d{1,2}\s*?[2][0-3]:[0-5]?[0-9]:[0-5]?[0-9])",
