@@ -5,7 +5,11 @@ import unicodedata
 from lxml.html import fromstring, HtmlElement
 from lxml.html import etree
 from urllib.parse import urlparse, urljoin
-from .defaults import USELESS_TAG, TAGS_CAN_BE_REMOVE_IF_EMPTY, USELESS_ATTR, HIGH_WEIGHT_ARRT_KEYWORD
+from http.cookiejar import CookieJar as cj
+
+from .version import __version__
+
+from .defaults import USELESS_TAG, TAGS_CAN_BE_REMOVE_IF_EMPTY, USELESS_ATTR, HIGH_WEIGHT_ARRT_KEYWORD, ALLOWED_TYPES
 
 
 def normalize_node(element: HtmlElement):
@@ -119,8 +123,8 @@ def pad_host_for_images(host, url):
 
 
 def read_config():
-    if os.path.exists('.gne'):
-        with open('.gne', encoding='utf-8') as f:
+    if os.path.exists('.xgne'):
+        with open('.xgne', encoding='utf-8') as f:
             config_text = f.read()
         config = yaml.safe_load(config_text)
         return config
@@ -137,11 +141,11 @@ def get_longest_common_sub_string(str1: str, str2: str) -> str:
 
     构造一个矩阵，横向是字符串1，纵向是字符串2，例如：
 
-      青南是天才！？
+      BL是天才！？
     听0 0 0 0 00 0
     说0 0 0 0 00 0
-    青1 0 0 0 00 0
-    南0 1 0 0 00 0
+    B1 0 0 0 00 0
+    L0 1 0 0 00 0
     是0 0 1 0 00 0
     天0 0 0 1 00 0
     才0 0 0 0 10 0
@@ -149,15 +153,18 @@ def get_longest_common_sub_string(str1: str, str2: str) -> str:
 
     显然，只要斜对角线最长的就是最长公共子串
 
-    :param str1:
-    :param str2:
-    :return:
+    :param str1: 第一个字符串
+    :param str2: 第二个字符串
+    :return: 最长公共子串
     """
     if not all([str1, str2]):
         return ''
+
+    # 构造一个矩阵，横向是字符串1，纵向是字符串2
     matrix = [[0] * (len(str2) + 1) for _ in range(len(str1) + 1)]
     max_length = 0
     start_position = 0
+
     for index_of_str1 in range(1, len(str1) + 1):
         for index_of_str2 in range(1, len(str2) + 1):
             if str1[index_of_str1 - 1] == str2[index_of_str2 - 1]:
@@ -167,6 +174,7 @@ def get_longest_common_sub_string(str1: str, str2: str) -> str:
                     start_position = index_of_str1 - max_length
             else:
                 matrix[index_of_str1][index_of_str2] = 0
+
     return str1[start_position: start_position + max_length]
 
 
@@ -177,6 +185,55 @@ def normalize_text(html):
     :return:
     """
     return unicodedata.normalize('NFKC', html)
+
+
+def urljoin_if_valid(base_url: str, url: str) -> str:
+    """拼接基本URL和可能是相对URL的地址，防止由于解析导致的无效URL。
+
+    Args:
+        base_url (str): 基本URL（即文章的URL）
+        url (str): 相对或绝对URL
+
+    Returns:
+        str: 如果有效则返回拼接的URL，否则返回空字符串
+    """
+
+    try:
+        res = urljoin(base_url, url)
+        return res
+    except ValueError:
+        return ""
+
+
+def url_to_filetype(abs_url: str) -> None:
+    """
+    输入一个URL，输出由URL指定的文件的文件类型。对于没有文件类型的情况，返回None。
+    'http://blahblah/images/car.jpg' -> 'jpg'
+    'http://yahoo.com'               -> None
+    """
+    path = urlparse(abs_url).path.rstrip('/')
+    path_chunks = [x for x in path.split("/") if x]
+    last_chunk = path_chunks[-1].split('.')  # 最后一块通常是文件
+    if len(last_chunk) < 2:
+        return None
+    file_type = last_chunk[-1]
+    # 假设文件扩展名最多为5个字符长
+    return file_type.lower() if len(file_type) <= 5 or file_type.lower() in ALLOWED_TYPES else None
+
+
+def get_requests_params():
+    '''
+    获取请求头的参数
+    :return:
+    '''
+    return {
+        "timeout": 7,
+        "proxies": {},
+        "headers": {
+            "User-Agent": f"xgne/{__version__}",
+        },
+        "cookies": cj(),
+    }
 
 
 config = read_config()

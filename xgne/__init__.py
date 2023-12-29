@@ -40,6 +40,7 @@ class GeneralNewsExtractor:
                   'content': content[0][1]['text'],
                   'images': content[0][1]['images'],
                   'headmeta': headmeta,
+                  'top_image': headmeta.pop('top_image'),
                   'website': headmeta.pop('host')
                   }
         if with_body_html or config.get('with_body_html', False):
