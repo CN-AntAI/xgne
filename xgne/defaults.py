@@ -135,3 +135,37 @@ META_IMAGE_TAGS = [
     {"tag": "meta", "field": 'meta[name="og:image"]', "score": 8},
     {"tag": "link", "attr": "rel", "value": "icon", "score": 5},
 ]
+
+ARTICLE_BODY_TAGS = [
+    {"tag": "article", "role": "article"},
+    {"itemprop": "articleBody"},
+    {"itemtype": "https://schema.org/Article"},
+    {"itemtype": "https://schema.org/NewsArticle"},
+    {"itemtype": "https://schema.org/BlogPosting"},
+    {"itemtype": "https://schema.org/ScholarlyArticle"},
+    {"itemtype": "https://schema.org/SocialMediaPosting"},
+    {"itemtype": "https://schema.org/TechArticle"},
+]
+
+ALLOWED_TYPES = [
+    "html",
+    "htm",
+    "md",
+    "rst",
+    "aspx",
+    "jsp",
+    "rhtml",
+    "cgi",
+    "xhtml",
+    "jhtml",
+    "asp",
+    "shtml",
+]
+TOP_IMAGE_SETTINGS = {
+    "min_width": 300,
+    "min_height": 200,
+    "min_area": 10000,
+    "max_retries": 2,
+}
+
+STOPWORDS_DIR = ''

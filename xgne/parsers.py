@@ -20,6 +20,10 @@ import lxml.html
 import lxml.html.clean
 from html import unescape
 
+from bs4 import UnicodeDammit
+
+from . import text
+
 log = logging.getLogger(__name__)
 
 
@@ -42,20 +46,20 @@ class Parser:
     def css_select(cls, node, selector):
         return node.cssselect(selector)
 
-    # @classmethod
-    # def get_unicode_html(cls, html):
-    #     if isinstance(html, str):
-    #         return html
-    #     if not html:
-    #         return html
-    #     converted = UnicodeDammit(html, is_html=True)
-    #     if not converted.unicode_markup:
-    #         raise ValueError(
-    #             "Failed to detect encoding of article HTML, tried: %s"
-    #             % ", ".join(converted.tried_encodings)
-    #         )
-    #     html = converted.unicode_markup
-    #     return html
+    @classmethod
+    def get_unicode_html(cls, html):
+        if isinstance(html, str):
+            return html
+        if not html:
+            return html
+        converted = UnicodeDammit(html, is_html=True)
+        if not converted.unicode_markup:
+            raise ValueError(
+                "Failed to detect encoding of article HTML, tried: %s"
+                % ", ".join(converted.tried_encodings)
+            )
+        html = converted.unicode_markup
+        return html
 
     @classmethod
     def fromstring(cls, html):
@@ -263,10 +267,10 @@ class Parser:
     def getTag(cls, node):
         return node.tag
 
-    # @classmethod
-    # def getText(cls, node):
-    #     txts = [i for i in node.itertext()]
-    #     return text.innerTrim(" ".join(txts).strip())
+    @classmethod
+    def getText(cls, node):
+        txts = [i for i in node.itertext()]
+        return text.innerTrim(" ".join(txts).strip())
 
     @classmethod
     def previousSiblings(cls, node):

@@ -1,3 +1,5 @@
+import codecs
+import logging
 import os
 import re
 import yaml
@@ -10,6 +12,9 @@ from http.cookiejar import CookieJar as cj
 from .version import __version__
 
 from .defaults import USELESS_TAG, TAGS_CAN_BE_REMOVE_IF_EMPTY, USELESS_ATTR, HIGH_WEIGHT_ARRT_KEYWORD, ALLOWED_TYPES
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 
 def normalize_node(element: HtmlElement):
@@ -234,6 +239,23 @@ def get_requests_params():
         },
         "cookies": cj(),
     }
+
+
+class FileHelper(object):
+    @staticmethod
+    def loadResourceFile(filename):
+        if not os.path.isabs(filename):
+            dirpath = os.path.abspath(os.path.dirname(__file__))
+            path = os.path.join(dirpath, 'resources', filename)
+        else:
+            path = filename
+        try:
+            f = codecs.open(path, 'r', 'utf-8')
+            content = f.read()
+            f.close()
+            return content
+        except IOError:
+            raise IOError("Couldn't open file %s" % path)
 
 
 config = read_config()
