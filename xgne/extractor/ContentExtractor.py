@@ -39,7 +39,12 @@ class ContentExtractor:
             ti_text = density_info['ti_text']
             text_tag_count = self.count_text_tag(node, tag='p')
             sbdi = self.calc_sbdi(ti_text, density_info['ti'], density_info['lti'])
-            images_list = node.xpath('.//img/@src')
+            images_list = [
+                i.xpath('./@data-src')[0]
+                if ';base64,' in i.xpath('./@src')[0]
+                else i.xpath('./@src')[0]
+                for i in node.xpath('.//img')
+            ]
             host = host or config.get('host', '')
             if host:
                 images_list = [pad_host_for_images(host, url) for url in images_list]
@@ -82,7 +87,7 @@ class ContentExtractor:
         text_list = []
         for element in element_list:
             element_flag = element.getroottree().getpath(element)
-            if element_flag in self.element_text_cache: # 直接读取缓存的数据，而不是再重复提取一次
+            if element_flag in self.element_text_cache:  # 直接读取缓存的数据，而不是再重复提取一次
                 text_list.extend(self.element_text_cache[element_flag])
             else:
                 element_text_list = []
@@ -117,7 +122,6 @@ class ContentExtractor:
             return False
 
         return ti // lti > 10  # 正文的字符数量是链接字符数量的十倍以上
-
 
     def calc_text_density(self, element):
         """
@@ -154,6 +158,9 @@ class ContentExtractor:
 
     def increase_tag_weight(self, ti, element):
         tag_class = element.get('class', '')
+        tag_id = element.get('id', '')
+        if self.high_weight_keyword_pattern.search(tag_id):
+            return 2 * ti
         if self.high_weight_keyword_pattern.search(tag_class):
             return 2 * ti
         return ti
@@ -171,7 +178,7 @@ class ContentExtractor:
         """
         sbi = self.count_punctuation_num(text)
         sbdi = (ti - lti) / (sbi + 1)
-        return sbdi or 1   # sbdi 不能为0，否则会导致求对数时报错。
+        return sbdi or 1  # sbdi 不能为0，否则会导致求对数时报错。
 
     def count_punctuation_num(self, text):
         count = 0
