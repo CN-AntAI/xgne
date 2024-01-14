@@ -41,7 +41,7 @@ class ContentExtractor:
             sbdi = self.calc_sbdi(ti_text, density_info['ti'], density_info['lti'])
             images_list = [
                 i.xpath('./@data-src')[0]
-                if ';base64,' in i.xpath('./@src')[0]
+                if i.xpath('./@data-src') and ';base64,' in i.xpath('./@src')[0]
                 else i.xpath('./@src')[0]
                 for i in node.xpath('.//img')
             ]
