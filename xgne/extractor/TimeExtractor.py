@@ -1,5 +1,6 @@
 import re
 import time
+from datetime import datetime
 
 from ..utils import config
 from lxml.html import HtmlElement
@@ -75,11 +76,15 @@ class TimeExtractor:
     def deal_publish_time(self, publish_time_temp) -> dict:
         try:
             publish_time = parse(publish_time_temp)
+            # 将字符串转换为 datetime 对象
+            input_time = datetime.fromisoformat(publish_time.isoformat())
+            # 获取时区信息
+            timezone_info = input_time.tzname()
             if publish_time:
                 formatted_time = {
                     'publish_time_src': publish_time_temp,
                     'publish_time_ts': int(publish_time.timestamp()),
-                    'publish_time_zone': publish_time.strftime('%Z'),
+                    'publish_time_zone': timezone_info,
                     'publish_time_format': publish_time.strftime('%Y-%m-%d %H:%M:%S')
                 }
                 return formatted_time
