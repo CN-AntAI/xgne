@@ -25,7 +25,7 @@ class ContentExtractor:
             body = selector.xpath(body_xpath)[0]
         else:
             body = selector.xpath('//body')[0]
-        for node in iter_node(body):
+        for node_index, node in enumerate(iter_node(body)):
             if use_visiable_info:
                 if not node.attrib.get('is_visiable', True):
                     continue
@@ -53,6 +53,7 @@ class ContentExtractor:
                          'tgi': density_info['tgi'],
                          'ltgi': density_info['ltgi'],
                          'node': node,
+                         'node_index': node_index,
                          'density': text_density,
                          'text': ti_text,
                          'images': images_list,
