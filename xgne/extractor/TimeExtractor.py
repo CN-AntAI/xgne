@@ -19,7 +19,7 @@ class TimeExtractor:
         self.SCRIPT_TIME_RE = SCRIPT_TIME_RE
 
     def extractor(self, element: HtmlElement, publish_time_xpath: str = '', normal_html=None, title=None,
-                  content=None, html=None) -> dict:
+                  content=None, html=None, npp_pt=None) -> dict:
         '''
         时间解析器
         :param element: 网页对象
@@ -49,6 +49,7 @@ class TimeExtractor:
         publish_time_xpath = publish_time_xpath or config.get('publish_time', {}).get('xpath')
         publish_time = (self.extract_from_user_xpath(publish_time_xpath, element)  # 用户指定的 Xpath 是第一优先级
                         or self.extract_from_meta(element)  # 第二优先级从 Meta 中提取
+                        or npp_pt  # 引入3k的发布时间判断
                         or self.extract_data_from_ld_script(html_text=normal_html)  # 第三优先级从javascript中有Json的情况
                         or self.extract_data_from_script_re(html_text=normal_html)  # 第三优先级从javascript中与正则情况
                         or self.find_data_in_all_html_text(normal_html)  # 第三优先级从全文正则情况
