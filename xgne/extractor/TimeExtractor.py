@@ -471,6 +471,30 @@ class TimeExtractor:
         except Exception as e:
             return self._set_default_pt()
 
+    def deal_publish_time_dtt(self, publish_time_temp) -> dict:
+        '''
+        处理时间格式为日期时间型
+        '''
+        try:
+            # 将字符串转换为 datetime 对象
+            input_time = datetime.fromisoformat(publish_time_temp.isoformat())
+            publish_time_temp2 = publish_time_temp.strftime('%Y-%m-%d %H:%M:%S %Z')
+            publish_time = parse(publish_time_temp2)
+            # 获取时区信息
+            timezone_info = input_time.tzname()
+            if publish_time:
+                formatted_time = {
+                    'publish_time_src': publish_time_temp2,
+                    'publish_time_ts': int(publish_time.timestamp()),
+                    'publish_time_zone': timezone_info,
+                    'publish_time_format': publish_time.strftime('%Y-%m-%d %H:%M:%S')
+                }
+                return formatted_time
+            else:
+                return self._set_default_pt()
+        except Exception as e:
+            return self._set_default_pt()
+
     def _set_default_pt(self):
         '''
         设置默认的发布时间
