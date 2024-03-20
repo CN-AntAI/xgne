@@ -478,14 +478,14 @@ class TimeExtractor:
         try:
             # 将字符串转换为 datetime 对象
             input_time = datetime.fromisoformat(publish_time_temp.isoformat())
-            publish_time_temp2 = publish_time_temp.strftime('%Y-%m-%d %H:%M:%S %Z')
+            publish_time_temp2 = publish_time_temp.strftime('%Y-%m-%d %H:%M:%S')
             publish_time = parse(publish_time_temp2)
             # 获取时区信息
             timezone_info = input_time.tzname()
             if publish_time:
                 formatted_time = {
                     'publish_time_src': publish_time_temp2,
-                    'publish_time_ts': int(publish_time.timestamp()),
+                    'publish_time_ts': int(input_time.timestamp()),
                     'publish_time_zone': timezone_info,
                     'publish_time_format': publish_time.strftime('%Y-%m-%d %H:%M:%S')
                 }
