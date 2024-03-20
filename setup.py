@@ -27,5 +27,5 @@ setup(
     author_email="18656170559@163.com",
     include_package_data=True,
     platforms="any",
-    install_requires=['wheel', 'w3lib', 'lxml', 'numpy', 'langdetect', 'pyyaml']
+    install_requires=['wheel', 'w3lib', 'lxml', 'numpy', 'langid', 'pyyaml', 'newspaper3k', 'dateutils']
 )
