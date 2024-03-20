@@ -92,7 +92,7 @@ class GeneralNewsExtractor:
                     'images': self.article.imgs,
                     'headmeta': dict(self.article.meta_data),
                     'top_image': self.article.top_image,
-                    'website': self.article.source_url
+                    'website': host
                 }
             if with_body_html or config.get('with_body_html', False):
                 result['body_html'] = body_html
