@@ -10,7 +10,6 @@ class GeneralNewsExtractor:
     def __init__(self):
         # 配置 newspaper
         self.config = Config()
-        self.article = Article('')
 
     def extract(self,
                 html,
@@ -22,23 +21,24 @@ class GeneralNewsExtractor:
                 noise_node_list=None,
                 with_body_html=False,
                 use_visiable_info=False):
+        article = Article('')
         try:
             # 对 HTML 进行预处理可能会破坏 HTML 原有的结构，导致根据原始 HTML 编写的 XPath 不可用
             # 因此，如果指定了 title_xpath/author_xpath/publish_time_xpath，那么需要先提取再进行
-            self.article.set_html(html)
-            self.article.parse()
+            article.set_html(html)
+            article.parse()
             # 输出已解析的信息
             info_dict = {
-                'movies': self.article.movies,
-                'keywords': self.article.keywords,
-                'meta_keywords': self.article.meta_keywords,
-                'meta_description': self.article.meta_description,
-                'summary': self.article.summary,
-                'tags': self.article.tags,
-                'canonical_link': self.article.canonical_link,
-                'source_url': self.article.source_url,
+                'movies': article.movies,
+                'keywords': article.keywords,
+                'meta_keywords': article.meta_keywords,
+                'meta_description': article.meta_description,
+                'summary': article.summary,
+                'tags': article.tags,
+                'canonical_link': article.canonical_link,
+                'source_url': article.source_url,
             }
-            body_html = tostring(self.article.clean_top_node, encoding="unicode", method="html")
+            body_html = tostring(article.clean_top_node, encoding="unicode", method="html")
             try:
                 # 预处理
                 normal_html = normalize_text(html)
@@ -46,7 +46,7 @@ class GeneralNewsExtractor:
                 lang = LangExtractor().language(html)
                 headmeta = HeadMetaExtractor().extractor(element)
                 title = TitleExtractor().extract(element, title_xpath=title_xpath)
-                author = AuthorExtractor().extractor(element, author_xpath=author_xpath) or self.article.authors
+                author = AuthorExtractor().extractor(element, author_xpath=author_xpath) or article.authors
                 element = pre_parse(element)
                 remove_noise_node(element, noise_node_list)
                 if not host:
@@ -62,10 +62,10 @@ class GeneralNewsExtractor:
                                                          title=title,
                                                          content=content[0][1]['text'],
                                                          html=html,
-                                                         npp_pt=self.article.publish_date
+                                                         npp_pt=article.publish_date
                                                          )
                 text = content[0][1]['text']
-                npp_text = self.article.text
+                npp_text = article.text
                 if npp_text and len(npp_text) > len(text):
                     text = npp_text
                 else:
@@ -81,17 +81,17 @@ class GeneralNewsExtractor:
                           'website': headmeta.pop('host')
                           }
             except:
-                publish_time_temp = self.article.publish_date
+                publish_time_temp = article.publish_date
                 publish_time = TimeExtractor().deal_publish_time_dtt(publish_time_temp)
                 result = {
-                    'title': self.article.title,
-                    'author': self.article.authors,
+                    'title': article.title,
+                    'author': article.authors,
                     'publish_time': publish_time,
-                    'lang': self.article.meta_lang,
-                    'content': self.article.text,
-                    'images': self.article.imgs,
-                    'headmeta': dict(self.article.meta_data),
-                    'top_image': self.article.top_image,
+                    'lang': article.meta_lang,
+                    'content': article.text,
+                    'images': article.imgs,
+                    'headmeta': dict(article.meta_data),
+                    'top_image': article.top_image,
                     'website': host
                 }
             if with_body_html or config.get('with_body_html', False):
