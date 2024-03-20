@@ -1,6 +1,6 @@
 from .utils import pre_parse, remove_noise_node, config, html2element, normalize_text
 from .extractor import ContentExtractor, TitleExtractor, TimeExtractor, AuthorExtractor, ListExtractor, LangExtractor, \
-    HeadMetaExtractor
+    HeadMetaExtractor, TimeExtractorB, TimeExtractorFeature, TimeExtractorFeature2
 
 
 class GeneralNewsExtractor:
@@ -33,6 +33,25 @@ class GeneralNewsExtractor:
                                              with_body_html=with_body_html,
                                              body_xpath=body_xpath,
                                              use_visiable_info=use_visiable_info)
+
+        if not publish_time:
+            publish_time = TimeExtractorFeature2().extract_from_script(normal_html)
+
+        if not publish_time:
+            publish_time = TimeExtractorFeature().extract_time_area(title, element, content=content[0][1]['text'])
+
+        if not publish_time:
+            publish_time = TimeExtractorB().extract_from_target_xpath(html)
+
+        if not publish_time:
+            publish_time = TimeExtractorFeature().extract_from_text(element, text=None, content=content[0][1]['text'])
+
+        if not publish_time:
+            publish_time = TimeExtractorB().extract_from_full_text(normal_html)
+
+        # if publish_time and publish_time.isdigit():
+        #     publish_time = tran_ts_to_timestr(int(publish_time))
+
         result = {'title': title,
                   'author': author,
                   'publish_time': publish_time,

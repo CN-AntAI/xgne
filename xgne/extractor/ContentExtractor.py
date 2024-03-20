@@ -1,7 +1,7 @@
 import re
 import json
 import numpy as np
-from lxml.html import etree
+from lxml.html import etree, tostring
 from html import unescape
 from ..utils import iter_node, pad_host_for_images, config, get_high_weight_keyword_pattern
 
@@ -203,3 +203,25 @@ class ContentExtractor:
             score = node_info['density'] * np.log10(node_info['text_tag_count'] + 2) * np.log(
                 node_info['sbdi'])
             self.node_info[node_hash]['score'] = score
+
+    def xpath_extract_content(self, element, content_xpath='', encoding='utf-8', clear_attrib=True, pretty_print=False,
+                              method='html'):
+        """
+        提取带标签的内容
+        :param element:
+        :param content_xpath:
+        :param encoding:
+        :param clear_attrib:
+        :param pretty_print:
+        :param method:
+        :return:
+        """
+        content = element.xpath(content_xpath)
+        news_content = ''
+        if content:
+            for element_ in content:
+                if clear_attrib:
+                    element_.attrib.clear()
+                news_content += bytes.decode(
+                    tostring(element_, encoding=encoding, pretty_print=pretty_print, method=method))
+        return news_content
