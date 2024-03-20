@@ -34,11 +34,13 @@ class GeneralNewsExtractor:
                 'meta_keywords': article.meta_keywords,
                 'meta_description': article.meta_description,
                 'summary': article.summary,
-                'tags': article.tags,
+                'tags': article.tags or [],
                 'canonical_link': article.canonical_link,
                 'source_url': article.source_url,
             }
-            body_html = tostring(article.clean_top_node, encoding="unicode", method="html")
+            body_html = ''
+            if article.clean_top_node:
+                body_html = tostring(article.clean_top_node, encoding="unicode", method="html")
             try:
                 # 预处理
                 normal_html = normalize_text(html)
