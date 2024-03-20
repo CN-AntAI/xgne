@@ -3,7 +3,7 @@ import json
 import numpy as np
 from lxml.html import etree, tostring
 from html import unescape
-from ..utils import iter_node, pad_host_for_images, config, get_high_weight_keyword_pattern
+from ..utils import iter_node, pad_host_for_images, config, get_high_weight_keyword_pattern, universal_filter
 
 
 class ContentExtractor:
@@ -64,7 +64,7 @@ class ContentExtractor:
                 node_info['coordinate'] = node.attrib.get('coordinate', '')
             if with_body_html or config.get('with_body_html', False):
                 body_source_code = unescape(etree.tostring(node, encoding='utf-8').decode())
-                node_info['body_html'] = body_source_code
+                node_info['body_html'] = universal_filter(body_source_code)
             self.node_info[node_hash] = node_info
         self.calc_new_score()
         result = sorted(self.node_info.items(), key=lambda x: x[1]['score'], reverse=True)

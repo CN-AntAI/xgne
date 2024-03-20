@@ -1,6 +1,6 @@
 from .utils import pre_parse, remove_noise_node, config, html2element, normalize_text
 from .extractor import ContentExtractor, TitleExtractor, TimeExtractor, AuthorExtractor, ListExtractor, LangExtractor, \
-    HeadMetaExtractor, TimeExtractorB, TimeExtractorFeature, TimeExtractorFeature2
+    HeadMetaExtractor
 
 
 class GeneralNewsExtractor:
@@ -22,7 +22,6 @@ class GeneralNewsExtractor:
         lang = LangExtractor().language(html)
         headmeta = HeadMetaExtractor().extractor(element)
         title = TitleExtractor().extract(element, title_xpath=title_xpath)
-        publish_time = TimeExtractor().extractor(element, publish_time_xpath=publish_time_xpath)
         author = AuthorExtractor().extractor(element, author_xpath=author_xpath)
         element = pre_parse(element)
         remove_noise_node(element, noise_node_list)
@@ -33,24 +32,13 @@ class GeneralNewsExtractor:
                                              with_body_html=with_body_html,
                                              body_xpath=body_xpath,
                                              use_visiable_info=use_visiable_info)
-
-        if not publish_time:
-            publish_time = TimeExtractorFeature2().extract_from_script(normal_html)
-
-        if not publish_time:
-            publish_time = TimeExtractorFeature().extract_time_area(title, element, content=content[0][1]['text'])
-
-        if not publish_time:
-            publish_time = TimeExtractorB().extract_from_target_xpath(html)
-
-        if not publish_time:
-            publish_time = TimeExtractorFeature().extract_from_text(element, text=None, content=content[0][1]['text'])
-
-        if not publish_time:
-            publish_time = TimeExtractorB().extract_from_full_text(normal_html)
-
-        # if publish_time and publish_time.isdigit():
-        #     publish_time = tran_ts_to_timestr(int(publish_time))
+        publish_time = TimeExtractor().extractor(element,
+                                                 publish_time_xpath=publish_time_xpath,
+                                                 normal_html=normal_html,
+                                                 title=title,
+                                                 content=content[0][1]['text'],
+                                                 html=html
+                                                 )
 
         result = {'title': title,
                   'author': author,

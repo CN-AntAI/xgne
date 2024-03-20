@@ -241,6 +241,43 @@ def get_requests_params():
     }
 
 
+# 通用文本过滤
+def universal_filter(text):
+    if text:
+        # \u1234
+        text = text.replace(u'\u200b', '')
+        text = text.replace(u'\u2002', '')
+        text = text.replace(u'\u3000', '')
+        text = text.replace(u'\ufeff', '')
+        # \x??
+        text = text.replace(u'\xa0', '')
+        text = text.replace(u'\x7f', '')
+        # &??
+        text = text.replace('&nbsp', ' ')
+        text = text.replace('&ldquo;', '"')
+        text = text.replace('&rdquo;', '"')
+        text = text.replace('&bull;', '•')
+        text = text.replace('&mdash;', '—')
+        text = text.replace('&lsquo;', "'")
+        text = text.replace('&rsquo;', "'")
+        text = text.replace('&hellip;', '…')
+        text = text.replace('&middot;', '·')
+        text = text.replace('&quot;', '"')
+        text = text.replace('&amp;', '&')
+        text = text.replace('&#39;', "'")
+        text = text.replace('&deg;', "°")
+        text = text.replace('&times;', "×")
+        text = text.replace('&beta;', "β")
+        text = text.replace('&ndash;', "–")
+        # \n, \r, \t
+        text = text.replace('\n', '')
+        text = text.replace('\r', '')
+        text = text.replace('\t', '')
+        # '  ?  '
+        text = text.strip()
+    return text
+
+
 class FileHelper(object):
     @staticmethod
     def loadResourceFile(filename):

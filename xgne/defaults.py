@@ -265,8 +265,6 @@ RE_SUB_MAP = {
 }
 # name itemprop property
 
-PUBLISH_TIME_META = [
-]
 MATA_TIME_TOKEN = {
     'article:published_time',
     'datePublished',
