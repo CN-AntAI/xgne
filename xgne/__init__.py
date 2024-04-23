@@ -10,6 +10,7 @@ class GeneralNewsExtractor:
     def __init__(self):
         # 配置 newspaper
         self.config = Config()
+        self.config.fetch_images = False
 
     def extract(self,
                 html,
@@ -21,7 +22,7 @@ class GeneralNewsExtractor:
                 noise_node_list=None,
                 with_body_html=False,
                 use_visiable_info=False):
-        article = Article('')
+        article = Article('', config=self.config)
         try:
             # 对 HTML 进行预处理可能会破坏 HTML 原有的结构，导致根据原始 HTML 编写的 XPath 不可用
             # 因此，如果指定了 title_xpath/author_xpath/publish_time_xpath，那么需要先提取再进行
