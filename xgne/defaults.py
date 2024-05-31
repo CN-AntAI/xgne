@@ -352,11 +352,14 @@ SCRIPT_TIME_RE = [
 
 ## 只取group 1 的这个要注意
 BASE_SCRIPT_TIME_RE = """["\']?%s *["\']? *: *["\']?(.*?)["\']"""
+# 假设 SCRIPT_TIME_RE_TOKEN 是一个包含可能的时间字段名称的列表
 SCRIPT_TIME_RE_TOKEN = [
     'datePublished',
     'publishedDate',
     'created_date',
+    'dateCreated',
     'publish_date',
+    'uploadDate',
     'publishedDateCro',
     'publishedDateUtc',
     'publishedAtDate',

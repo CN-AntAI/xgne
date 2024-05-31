@@ -18,7 +18,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name="xgne",
-    version="0.0.9",
+    version="0.0.10",
     packages=find_packages(),
     long_description=README,  # 详细描述（一般会写在README.md中）
     long_description_content_type="text/markdown",  # README.md中描述的语法（一般为markdown）
@@ -27,5 +27,6 @@ setup(
     author_email="18656170559@163.com",
     include_package_data=True,
     platforms="any",
-    install_requires=['wheel', 'w3lib', 'lxml', 'numpy', 'langid', 'pyyaml', 'newspaper3k', 'dateutils', 'parsel']
+    install_requires=['wheel', 'w3lib', 'lxml', 'numpy', 'langid', 'pyyaml', 'newspaper3k', 'dateutils', 'parsel',
+                      'jsonpath']
 )

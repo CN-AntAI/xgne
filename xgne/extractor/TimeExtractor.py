@@ -2,6 +2,7 @@ import json
 import re
 from datetime import datetime
 
+import jsonpath
 from parsel import Selector
 
 from ..dom.DomHandler import DomHandle
@@ -400,24 +401,22 @@ class TimeExtractor:
         # 使用 Scrapy 的 Selector 对象从 HTML 文本中提取 JSON 数据
         sel = Selector(text=html_text)
         datas = sel.xpath('//script[@type="application/ld+json"]/text()').getall()
-
-        # 遍历所有提取到的 JSON 数据
-        for data in datas:
+        published = ''
+        for script_content in datas:
             try:
-                data = json.loads(data)
-                # 遍历预定义的时间字段列表 SCRIPT_TIME_RE_TOKEN
+                data = json.loads(script_content)
+                # 遍历预定义的时间字段列表
                 for key in SCRIPT_TIME_RE_TOKEN:
                     try:
-                        published = data[key]
+                        published = jsonpath.jsonpath(data, f'$..{key}')
                         # 如果找到时间信息，则返回该信息
                         if published:
-                            return published  # 返回找到的时间信息
-                    except Exception as e:
+                            published = published[0]
+                    except Exception:
                         pass
-            except Exception as e:
+            except Exception:
                 pass
-
-        return ''  # 如果未找到时间信息，则返回空字符串
+        return published  # 如果未找到时间信息，则返回空字符串
 
     def extract_data_from_script_re(self, html_text):
         """

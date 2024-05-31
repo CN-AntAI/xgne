@@ -72,7 +72,10 @@ class GeneralNewsExtractor:
                 if npp_text and len(npp_text) > len(text):
                     text = npp_text
                 else:
-                    body_html = content[0][1]['body_html']
+                    try:
+                        body_html = content[0][1].get('body_html', '')
+                    except:
+                        pass
                 result = {'title': title,
                           'author': author,
                           'publish_time': publish_time,
