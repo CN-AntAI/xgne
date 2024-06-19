@@ -1,3 +1,3 @@
-* [![GitHub stars](https://img.shields.io/github/stars/GeneralNewsExtractor/GeneralNewsExtractor?style=social)](https://github.com/GeneralNewsExtractor/GeneralNewsExtractor/stargazers)
+* [![GitHub stars](https://img.shields.io/github/stars/CN-AntAI/xgne?style=social)](https://github.com/CN-AntAI/xgne/stargazers)
 
-* [![GitHub forks](https://img.shields.io/github/forks/GeneralNewsExtractor/GeneralNewsExtractor?style=social)](https://github.com/GeneralNewsExtractor/GeneralNewsExtractor/network)
+* [![GitHub forks](https://img.shields.io/github/forks/CN-AntAI/xgne?style=social)](https://github.com/CN-AntAI/xgne/network)

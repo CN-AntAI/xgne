@@ -3,3 +3,4 @@ test_demo
 build
 dist
 xgne.egg-info
+x_test.py

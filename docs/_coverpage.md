@@ -12,5 +12,5 @@
 - 不同时间格式化
 - meta解析
 
-[GitHub](https://github.com/GeneralNewsExtractor/GeneralNewsExtractor)
+[GitHub](https://github.com/CN-AntAI/xgne)
 [开始使用](#xgne-0010)
